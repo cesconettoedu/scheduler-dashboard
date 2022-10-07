@@ -12,6 +12,7 @@ import {
   getInterviewsPerDay
  } from "helpers/selectors";
 
+ import { setInterview } from "helpers/reducers";
 
 const data = [
   {
@@ -68,15 +69,32 @@ class Dashboard extends Component {
       });
     });
 
+    this.socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+
     if (focused) {
       this.setState({ focused });
     }
+
+    this.socket.onmessage = event => {
+      const data = JSON.parse(event.data);
+    
+      if (typeof data === "object" && data.type === "SET_INTERVIEW") {
+        this.setState(previousState =>
+          setInterview(previousState, data.id, data.interview)
+        );
+      }
+    };
   }
 
   componentDidUpdate(previousProps, previousState) {
     if (previousState.focused !== this.state.focused) {
       localStorage.setItem("focused", JSON.stringify(this.state.focused));
     }
+  }
+
+  // for the cleanup
+  componentWillUnmount() {
+    this.socket.close();
   }
  
  
