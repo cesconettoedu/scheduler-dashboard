@@ -15,3 +15,9 @@ npm start
 ```sh
 npm test
 ```
+
+# Have to run
+- Scheduler-api -> npm start
+- Scheduler-dashboard -> npm start
+- Scheduler -> npm start
+
